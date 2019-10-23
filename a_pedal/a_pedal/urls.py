@@ -19,4 +19,5 @@ from django.urls import path,include
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('perfil/',include(('users.urls','users'),namespace='perfil')),
+    path('punto/',include(('puntos.urls','puntos'),namespace='punto'))
 ]

@@ -25,7 +25,7 @@ SECRET_KEY = '=y)gsj9k=ecugk883ug$#o4qixagr+f98#-9-f&r@^-)a&fqu%'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['localhost','127.0.0.1','localhost:8000/perfil/perfiles/']
 
 
 # Application definition
@@ -38,6 +38,7 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'rest_framework',
+    'rest_framework.authtoken',
     'planes',
     'puntos',
     'users',
