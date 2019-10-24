@@ -9,5 +9,5 @@ from puntos.views import (
 urlpatterns = [
     path('puntos/',PuntosListView.as_view()),
     path('<int:id>/',PuntoPorIdView.as_view()),
-    path('crear/',CrearPuntoView.as_view()),
+    path('nuevo/',CrearPuntoView.as_view()),
 ]

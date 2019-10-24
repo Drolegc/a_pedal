@@ -13,8 +13,8 @@ class Valoracion(models.Model):
 
 class Planes(models.Model):
     titulo = models.CharField(max_length=15,blank=True)
-    likes = models.ManyToManyField(Valoracion)
-    puntos = models.ManyToManyField(Punto)
+    likes = models.ManyToManyField(Valoracion,blank=True)
+    puntos = models.ManyToManyField(Punto,related_name='punto')
     creador = models.ForeignKey(Perfil,on_delete=models.CASCADE)
 
     def __str__(self):
@@ -22,4 +22,8 @@ class Planes(models.Model):
             self.titulo,
             self.likes,
             self.puntos)
+
+    @property
+    def creador__user(self):
+        return self.creador.user.username
 

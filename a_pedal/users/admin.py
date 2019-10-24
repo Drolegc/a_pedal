@@ -6,4 +6,4 @@ from users.models import Perfil
 
 @admin.register(Perfil)
 class Perfil_admin(admin.ModelAdmin):
-    list_display = ('pk','user')
+    list_display = ('pk','user','activo')

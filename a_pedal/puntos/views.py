@@ -1,13 +1,11 @@
-from django.shortcuts import render
-
 #DRF
-
 from rest_framework.generics import (
     ListAPIView,
     CreateAPIView,
     RetrieveAPIView,
 ) 
-
+#Permissions
+from a_pedal.permissions import IsLogged
 #Model
 from puntos.models import Punto
 
@@ -29,6 +27,7 @@ class PuntoPorIdView(RetrieveAPIView):
 
 """ Create a particular point """
 class CrearPuntoView(CreateAPIView):
+    permission_classes = [IsLogged]
     queryset = Punto.objects.all()
     serializer_class = PuntoSerializer
     

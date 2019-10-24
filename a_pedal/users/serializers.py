@@ -1,36 +1,44 @@
 from rest_framework import serializers
-from rest_framework.authtoken.models import Token
 from rest_framework.validators import UniqueValidator
 
 #DJango users
+from django.utils import timezone
 from django.contrib.auth import (
     authenticate,
     password_validation
     )
 
+from a_pedal.settings import SECRET_KEY
 from django.contrib.auth.models import User
 #Modelo users
 from users.models import Perfil
-
+#JWT
+import jwt 
+#Py
+from datetime import timedelta
 
 class LoginSerializer(serializers.Serializer):
     username = serializers.CharField()
-    password = serializers.CharField()
+    password = serializers.CharField(min_length=8,max_length=64)
 
     def validate(self,data):
-
         user = authenticate(username=data['username'],password=data['password'])
-        print(type(user))
         if not user:
             raise serializers.ValidationError("Incorrecto!")
-        
-        print(Perfil.objects.get(user__username="test"))
-        self.context['user'] = Perfil.objects.get(user=user)
+        if not Perfil.objects.get(user=user).activo:
+            raise serializers.ValidationError("No esta activo aun...")
         return data
 
     def create(self,data):
-        token,created = Token.objects.get_or_create(user=self.context['user'])
-        return self.context['user'],token.key
+        exp_date = timezone.now() + timedelta(days=1)
+        payload = {
+            'user':data['username'],
+            'exp':int(exp_date.timestamp())
+            }
+        token = jwt.encode(payload,SECRET_KEY,algorithm='HS256')
+
+        #token,created = Token.objects.get_or_create(user=self.context['user'].user)
+        return token.decode()
 
 class UserSignUpSerializer(serializers.Serializer):
 
@@ -39,9 +47,9 @@ class UserSignUpSerializer(serializers.Serializer):
         max_length=20,
         validators=[UniqueValidator(queryset=User.objects.all())]
         )
-    password = serializers.CharField(min_length=8,max_length=64)
-    password_conf = serializers.CharField(min_length=8,max_length=64)
-    email = serializers.EmailField(validators=[])
+    password = serializers.CharField(min_length=8,max_length=64,write_only=True)
+    password_conf = serializers.CharField(min_length=8,max_length=64,write_only=True)
+    email = serializers.EmailField(validators=[UniqueValidator(queryset=User.objects.all())])
     
     def validate(self,data):
         passwd = data['password']
@@ -69,12 +77,11 @@ class UserSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = User
-        fields = ['username','password','email']
+        fields = ['username','email']
 
 class PerfilSerializer(serializers.ModelSerializer):
     user = UserSerializer()
 
     class Meta:
         model = Perfil
-        fields = '__all__'
-
+        exclude = ['id']
