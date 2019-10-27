@@ -84,4 +84,4 @@ class PerfilSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Perfil
-        exclude = ['id']
+        exclude = ['id','activo']
