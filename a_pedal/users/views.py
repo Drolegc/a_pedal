@@ -35,6 +35,8 @@ class PerfilViewSet(ModelViewSet):
     def create(self,validated_data):
         return Response(data={"to_create":"/perfil/signup/"},status=status.HTTP_303_SEE_OTHER)
     
+    def update(self,instance,validated_data):
+        return Response(status=status.HTTP_501_NOT_IMPLEMENTED)
 
 
 class SignUp(CreateAPIView):
