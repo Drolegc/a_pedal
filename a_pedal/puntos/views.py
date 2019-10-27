@@ -1,34 +1,27 @@
 #DRF
-from rest_framework.generics import (
-    ListAPIView,
-    CreateAPIView,
-    RetrieveAPIView,
-) 
-
+from rest_framework.response import Response
+from rest_framework import viewsets,status
+#Settings
+from a_pedal.settings import SECRET_KEY
 #Permissions
 from a_pedal.permissions import IsLogged
 #Model
 from puntos.models import Punto
-
+from users.models import Perfil
 #Serializer
 from puntos.serializers import PuntoSerializer
-# Create your views here.
+#Utils
+import jwt
 
 
-""" Get a list of Points """
-class PuntosListView(ListAPIView):
+class PuntoViewSet(viewsets.ModelViewSet):
     queryset = Punto.objects.all()
     serializer_class = PuntoSerializer
-
-""" Get a point from the id """
-class PuntoPorIdView(RetrieveAPIView):
-    queryset = Punto.objects.all()
-    serializer_class = PuntoSerializer
-    lookup_field = 'id'
-
-""" Create a particular point """
-class CrearPuntoView(CreateAPIView):
     permission_classes = [IsLogged]
-    queryset = Punto.objects.all()
-    serializer_class = PuntoSerializer
-    
+
+    def create(self,request):
+        data = request.data
+        user = Perfil.objects.get(user__username=jwt.decode(data['token'],SECRET_KEY,algorithm='HS256')['user'])
+        data.pop('token')
+        punto = Punto.objects.create(creador=user,**data)
+        return Response(PuntoSerializer(punto).data,status=status.HTTP_201_CREATED)

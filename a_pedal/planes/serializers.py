@@ -37,10 +37,13 @@ class CrearPlanSerializer(serializers.Serializer):
 class PlanSerializer(serializers.ModelSerializer):
     puntos = PuntoSerializer(many=True)
     #Tomar solo el nickname
-    creador = serializers.StringRelatedField()
+    creador = serializers.StringRelatedField(read_only=True)
     
-
     class Meta:
         model = Planes
         fields = '__all__'
+
+    def update(self, instance, validated_data):
+        instance.titulo = validated_data.get('titulo', instance.titulo)
+        return instance
 

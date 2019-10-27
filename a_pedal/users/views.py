@@ -15,10 +15,11 @@ from users.serializers import (PerfilSerializer,
 #REST
 from rest_framework.response import Response
 from rest_framework.generics import (
-    ListAPIView,
+    RetrieveAPIView,
     CreateAPIView
     )
 from rest_framework.views import APIView
+from rest_framework.viewsets import ModelViewSet
 
 from rest_framework import status
 
@@ -26,13 +27,20 @@ from rest_framework import status
 
 # Create your views here.
 
+class PerfilViewSet(ModelViewSet):
+    queryset = Perfil.objects.all()
+    serializer_class = PerfilSerializer
+    lookup_field = 'user__username'
+
+    def create(self,validated_data):
+        return Response(data={"to_create":"/perfil/signup/"},status=status.HTTP_303_SEE_OTHER)
+    
+
+
 class SignUp(CreateAPIView):
     queryset = User.objects.all()
     serializer_class = UserSignUpSerializer
-        
-class PerfilTest(ListAPIView):
-    queryset = Perfil.objects.all()
-    serializer_class = PerfilSerializer
+
 
 class Login(APIView):
 

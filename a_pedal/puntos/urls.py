@@ -1,13 +1,14 @@
-from django.urls import path
+from django.urls import path,include
 
 from puntos.views import (
-    PuntosListView,
-    PuntoPorIdView,
-    CrearPuntoView,
+    PuntoViewSet,
     )
 
+from rest_framework.routers import DefaultRouter
+
+router = DefaultRouter()
+router.register(r'',PuntoViewSet,basename="punto")
+
 urlpatterns = [
-    path('puntos/',PuntosListView.as_view()),
-    path('<int:id>/',PuntoPorIdView.as_view()),
-    path('nuevo/',CrearPuntoView.as_view()),
+    path('',include(router.urls)),
 ]
