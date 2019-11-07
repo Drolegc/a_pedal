@@ -8,5 +8,7 @@ class Perfil(models.Model):
     def __str__(self):
         return "{}".format(self.user)
 
+class GoogleUser(models.Model):
+    perfil = models.OneToOneField("users.Perfil",on_delete=models.CASCADE)
 
 # Create your models here.

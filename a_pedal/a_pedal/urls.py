@@ -15,10 +15,15 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path,include
+from users.views import Login,SignUp,GoogleLogin,GoogleSignUp
 
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('perfil/',include(('users.urls','users'),namespace='perfil')),
+    path('login/',Login.as_view(),name='login'),
+    path('signup/',SignUp.as_view(),name='signup'),
+    path('authenticate_google/',GoogleLogin.as_view(),name="login_google"),
+    path('sign_up_google/',GoogleSignUp.as_view(),name="sign_up_google"),
     path('punto/',include(('puntos.urls','puntos'),namespace='punto')),
     path('plan/',include(('planes.urls','planes'),namespace='plan')),
 ]

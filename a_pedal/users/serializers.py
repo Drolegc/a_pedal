@@ -7,22 +7,26 @@ from django.contrib.auth import (
     authenticate,
     password_validation
     )
-
 from a_pedal.settings import SECRET_KEY
 from django.contrib.auth.models import User
+#Custom authentication
+from a_pedal.authentication import authenticate
 #Modelo users
-from users.models import Perfil
+from users.models import Perfil,GoogleUser
 #JWT
 import jwt 
 #Py
 from datetime import timedelta
+#Requests
+import requests as Request
 
 class LoginSerializer(serializers.Serializer):
-    username = serializers.CharField()
+    email = serializers.CharField()
     password = serializers.CharField(min_length=8,max_length=64)
 
     def validate(self,data):
-        user = authenticate(username=data['username'],password=data['password'])
+
+        user = authenticate(email=data['email'],password=data['password'])
         if not user:
             raise serializers.ValidationError("Incorrecto!")
         if not Perfil.objects.get(user=user).activo:
@@ -32,7 +36,7 @@ class LoginSerializer(serializers.Serializer):
     def create(self,data):
         exp_date = timezone.now() + timedelta(days=1)
         payload = {
-            'user':data['username'],
+            'user':data['email'],
             'exp':int(exp_date.timestamp())
             }
         token = jwt.encode(payload,SECRET_KEY,algorithm='HS256')
@@ -85,3 +89,82 @@ class PerfilSerializer(serializers.ModelSerializer):
     class Meta:
         model = Perfil
         exclude = ['id','activo']
+
+class GoogleSignUpSerializer(serializers.Serializer):
+    token = serializers.CharField()
+
+    def validate(self,data):
+        url = 'https://oauth2.googleapis.com/tokeninfo?id_token='  
+        
+        with Request.Session() as Connection:
+            valid_token = Connection.get(url + data['token'])
+            valid_token = valid_token.json()
+
+        try:
+            #chequeo error:invalid token
+            valid_token['sub']
+        except:
+            raise serializers.ValidationError("Id token invalido")
+
+        return valid_token
+
+    def create(self,data):
+
+        user = User.objects.create_user(
+            username = data['name'],
+            password = 'GooglePassword'+data['sub'],
+            email = data['email']
+        )
+
+        perfil = Perfil.objects.create(user=user,activo=True)
+        GoogleUser.objects.create(perfil = perfil)
+
+        #Crear JWT
+        exp_date = timezone.now() + timedelta(days=1)
+        payload = {
+            'user':data['email'],
+            'exp':int(exp_date.timestamp())
+            }
+        token = jwt.encode(payload,SECRET_KEY,algorithm='HS256')
+
+        #token,created = Token.objects.get_or_create(user=self.context['user'].user)
+        return token.decode()
+
+class GoogleLoginSerializer(serializers.Serializer):
+    token = serializers.CharField()
+
+    def validate(self,data):
+        url = 'https://oauth2.googleapis.com/tokeninfo?id_token='  
+        
+        with Request.Session() as Connection:
+            valid_token = Connection.get(url + data['token'])
+            valid_token = valid_token.json()
+
+        try:
+            email = valid_token['email']
+            password = 'GooglePassword'+valid_token['sub']
+
+            user = authenticate(email=email,password=password)
+
+            if not user:
+                raise serializers.ValidationError("Usuario no registrado")
+
+        except:
+            raise serializers.ValidationError("Id token invalido")
+
+        return valid_token
+
+    def create(self,data):
+        exp_date = timezone.now() + timedelta(days=1)
+        payload = {
+            'user':data['email'],
+            'exp':int(exp_date.timestamp())
+            }
+        token = jwt.encode(payload,SECRET_KEY,algorithm='HS256')
+
+        #token,created = Token.objects.get_or_create(user=self.context['user'].user)
+        return token.decode()
+
+        
+        
+        
