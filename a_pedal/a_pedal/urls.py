@@ -13,6 +13,9 @@ Including another URLconf
     1. Import the include() function: from django.urls import include, path
     2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
 """
+from django.conf.urls.static import static
+from a_pedal import settings
+
 from django.contrib import admin
 from django.urls import path,include
 from users.views import Login,SignUp,GoogleLogin,GoogleSignUp
@@ -26,4 +29,4 @@ urlpatterns = [
     path('sign_up_google/',GoogleSignUp.as_view(),name="sign_up_google"),
     path('punto/',include(('puntos.urls','puntos'),namespace='punto')),
     path('plan/',include(('planes.urls','planes'),namespace='plan')),
-]
+] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

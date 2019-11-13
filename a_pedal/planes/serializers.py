@@ -19,6 +19,7 @@ class CrearPlanSerializer(serializers.Serializer):
     token = serializers.CharField(write_only=True)
     puntos = PuntoSerializer(many=True)
     titulo = serializers.CharField()
+    imagen = serializers.ImageField(allow_empty_file=False, use_url=True)
 
     def create(self,data):
         user = Perfil.objects.get(user__username=jwt.decode(data['token'],SECRET_KEY,algorithm='HS256')['user'])

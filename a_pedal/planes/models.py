@@ -16,6 +16,7 @@ class Planes(models.Model):
     likes = models.ManyToManyField('planes.Valoracion',blank=True,default=None)
     puntos = models.ManyToManyField('puntos.Punto',related_name='punto')
     creador = models.ForeignKey('users.Perfil',on_delete=models.CASCADE)
+    imagen = models.ImageField(upload_to="planes",blank=False)
 
     def __str__(self):
         return "{}".format(
