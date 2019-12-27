@@ -1,8 +1,6 @@
 from django.urls import path,include
 
-from puntos.views import (
-    PuntoViewSet,
-    )
+from puntos.views.punto_view_set import PuntoViewSet
 
 from rest_framework.routers import DefaultRouter
 

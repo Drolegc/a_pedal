@@ -2,7 +2,8 @@ from django.contrib import admin
 
 # Register your models here.
 
-from planes.models import Planes,Valoracion
+from planes.models.planes import Planes
+from planes.models.valoracion import Valoracion
 
 @admin.register(Planes)
 class Planes_admin(admin.ModelAdmin):

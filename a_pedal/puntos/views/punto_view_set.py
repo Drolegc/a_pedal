@@ -6,10 +6,10 @@ from a_pedal.settings import SECRET_KEY
 #Permissions
 from a_pedal.permissions import IsLogged
 #Model
-from puntos.models import Punto
+from puntos.models.punto import Punto
 from users.models import Perfil
 #Serializer
-from puntos.serializers import PuntoSerializer
+from puntos.serializers.punto_serializer import PuntoSerializer
 #Utils
 import jwt
 

@@ -1,6 +1,6 @@
 from rest_framework import serializers
 
-from puntos.models import Punto
+from puntos.models.punto import Punto
 from users.models import Perfil
 
 import jwt

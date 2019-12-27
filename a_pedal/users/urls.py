@@ -4,7 +4,7 @@ from users.views import *
 from rest_framework.routers import DefaultRouter
 
 router = DefaultRouter()
-router.register(r'',PerfilViewSet,basename='perfil')
+router.register(r'perfil',PerfilViewSet,basename='perfil')
 
 urlpatterns = [
     path('',include(router.urls)),

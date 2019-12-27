@@ -20,6 +20,23 @@ from datetime import timedelta
 #Requests
 import requests as Request
 
+class UserJWTSerializer(serializers.ModelSerializer):
+
+    class Meta:
+        model = User
+        fields = ['username']
+
+    def validate(self,data):
+        print("La data del usuario {}".format(data))
+        return data
+
+    
+class UserSerializer(serializers.ModelSerializer):
+    
+    class Meta:
+        model = User
+        fields = ['username','email']
+
 class LoginSerializer(serializers.Serializer):
     email = serializers.CharField()
     password = serializers.CharField(min_length=8,max_length=64)
@@ -76,12 +93,6 @@ class UserSignUpSerializer(serializers.Serializer):
         Perfil.objects.create(user=user)
 
         return user
-
-class UserSerializer(serializers.ModelSerializer):
-
-    class Meta:
-        model = User
-        fields = ['username','email']
 
 class PerfilSerializer(serializers.ModelSerializer):
     user = UserSerializer()
